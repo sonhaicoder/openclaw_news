@@ -164,9 +164,40 @@
         <footer>
             <p>© 2026 Tech News - Cập nhật tự động từ các nguồn uy tín</p>
         </footer>
+
+        <!-- Section Tin Tức Tổng Hợp -->
+        <section style="max-width: 1200px; margin: 50px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+            <h2 style="color: #667eea; text-align: center; margin-bottom: 30px; font-size: 2em;">📊 TIN TỨC TỔNG HỢP HÔM NAY</h2>
+            <div id="summary-news" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;">
+                <div class="loading">Đang tải tin tức tổng hợp...</div>
+            </div>
+        </section>
     </div>
 
     <script>
+        // Danh sách các nguồn tin tức uy tín
+        const newsSources = [
+            {
+                name: "GenK",
+                url: "https://genk.vn",
+                rss: "https://genk.vn/rss"
+            },
+            {
+                name: "ICTNews",
+                url: "https://ictnews.vn",
+                rss: "https://ictnews.vn/rss"
+            },
+            {
+                name: "Thanh Niên Công Nghệ",
+                url: "https://thanhnien.vn/cong-nghe",
+                rss: "https://thanhnien.vn/rss/cong-nghe.rss"
+            },
+            {
+                name: "VnExpress Công Nghệ",
+                url: "https://vnexpress.net/khoa-hoc-cong-nghe",
+                rss: "https://vnexpress.net/rss/tin-moi-nhat.rss"
+            }
+        ];
         // Danh sách các nguồn tin tức uy tín
         const newsSources = [
             {
@@ -276,6 +307,212 @@
 
         // Tải tin tức mới mỗi 30 phút
         setInterval(fetchNews, 30 * 60 * 1000);
+
+        // Hàm lấy tin tức toàn cầu từ các nguồn uy tín
+        async function fetchGlobalNews() {
+            const summaryContainer = document.getElementById('summary-news');
+            summaryContainer.innerHTML = '<div class="loading">Đang tải tin tức toàn cầu...</div>';
+
+            try {
+                // Danh sách nguồn tin tức toàn cầu uy tín
+                const globalSources = [
+                    {
+                        name: "TechCrunch",
+                        type: "technology",
+                        url: "https://techcrunch.com",
+                        rss: "https://techcrunch.com/feed/"
+                    },
+                    {
+                        name: "The Verge",
+                        type: "technology",
+                        url: "https://www.theverge.com",
+                        rss: "https://www.theverge.com/rss/index.xml"
+                    },
+                    {
+                        name: "Ars Technica",
+                        type: "technology",
+                        url: "https://arstechnica.com",
+                        rss: "https://arstechnica.com/feed/"
+                    },
+                    {
+                        name: "Wired",
+                        type: "technology",
+                        url: "https://www.wired.com",
+                        rss: "https://www.wired.com/feed/rss"
+                    },
+                    {
+                        name: "Bloomberg Technology",
+                        type: "business",
+                        url: "https://www.bloomberg.com/technology",
+                        rss: "https://www.bloomberg.com/feeds/podcasts/technology.xml"
+                    },
+                    {
+                        name: "Reuters Business",
+                        type: "business",
+                        url: "https://www.reuters.com/business/",
+                        rss: "https://www.reuters.com/tools/rss"
+                    },
+                    {
+                        name: "Financial Times",
+                        type: "finance",
+                        url: "https://www.ft.com",
+                        rss: "https://www.ft.com/?format=rss"
+                    },
+                    {
+                        name: "CNBC",
+                        type: "finance",
+                        url: "https://www.cnbc.com",
+                        rss: "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+                    },
+                    {
+                        name: "MarketWatch",
+                        type: "finance",
+                        url: "https://www.marketwatch.com",
+                        rss: "https://feeds.a.dj.com/rss/RSSMarketsMain.xml"
+                    },
+                    {
+                        name: "Yahoo Finance",
+                        type: "finance",
+                        url: "https://finance.yahoo.com",
+                        rss: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=aapl"
+                    }
+                ];
+
+                const proxyUrl = 'https://api.allorigins.win/get?url=';
+                const newsItems = [];
+
+                // Lấy 5 tin công nghệ
+                const techItems = await fetchNewsByType(globalSources.filter(s => s.type === "technology"), 5);
+                newsItems.push(...techItems);
+
+                // Lấy 3 tin kinh doanh
+                const businessItems = await fetchNewsByType(globalSources.filter(s => s.type === "business"), 3);
+                newsItems.push(...businessItems);
+
+                // Lấy 2 tin tài chính
+                const financeItems = await fetchNewsByType(globalSources.filter(s => s.type === "finance"), 2);
+                newsItems.push(...financeItems);
+
+                // Sắp xếp theo loại
+                const sortedItems = newsItems.sort((a, b) => {
+                    const order = { technology: 1, business: 2, finance: 3 };
+                    return order[a.type] - order[b.type];
+                });
+
+                // Hiển thị tin tức
+                displaySummaryNews(sortedItems);
+
+            } catch (error) {
+                console.error("Lỗi khi lấy tin tức toàn cầu:", error);
+                summaryContainer.innerHTML = '<div class="error">Không thể tải tin tức toàn cầu. Vui lòng thử lại sau!</div>';
+            }
+        }
+
+        // Hàm lấy tin tức theo loại
+        async function fetchNewsByType(sources, maxItems) {
+            const items = [];
+            const proxyUrl = 'https://api.allorigins.win/get?url=';
+
+            for (const source of sources) {
+                try {
+                    const response = await fetch(`${proxyUrl}${encodeURIComponent(source.rss)}`);
+                    const data = await response.json();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+
+                    const rssItems = xmlDoc.querySelectorAll('item');
+                    for (let i = 0; i < Math.min(rssItems.length, maxItems); i++) {
+                        const item = rssItems[i];
+                        const title = item.querySelector('title').textContent;
+                        const link = item.querySelector('link') ? item.querySelector('link').textContent : '';
+                        const description = item.querySelector('description') ? item.querySelector('description').textContent : '';
+                        const pubDate = item.querySelector('pubDate') ? item.querySelector('pubDate').textContent : new Date().toISOString();
+
+                        // Tóm tắt ngắn 2 câu tiếng Việt (dịch đơn giản)
+                        const summary = generateVietnameseSummary(title, description);
+
+                        items.push({
+                            title,
+                            link,
+                            summary,
+                            source: source.name,
+                            type: source.type,
+                            pubDate
+                        });
+                    }
+                } catch (error) {
+                    console.error(`Lỗi khi lấy tin từ ${source.name}:`, error);
+                }
+            }
+
+            return items;
+        }
+
+        // Hàm tạo tóm tắt tiếng Việt đơn giản
+        function generateVietnameseSummary(title, description) {
+            // Chuyển đổi tiêu đề sang tiếng Việt đơn giản
+            const vietnameseTitles = {
+                "Apple": "Apple",
+                "Google": "Google",
+                "Microsoft": "Microsoft",
+                "AI": "Trí tuệ nhân tạo",
+                "Tech": "Công nghệ",
+                "Startup": "Khởi nghiệp",
+                "Stock": "Cổ phiếu",
+                "Market": "Thị trường",
+                "Crypto": "Tiền điện tử",
+                "Blockchain": "Blockchain"
+            };
+
+            let vietnameseTitle = title;
+            for (const [en, vi] of Object.entries(vietnameseTitles)) {
+                vietnameseTitle = vietnameseTitle.replace(new RegExp(en, 'gi'), vi);
+            }
+
+            // Tạo tóm tắt 2 câu đơn giản
+            const sentences = [
+                `Bài viết giới thiệu về ${vietnameseTitle.toLowerCase().replace(/^./, str => str.toUpperCase())}.`,
+                `Nguồn tin cung cấp thông tin chi tiết về chủ đề này.`
+            ];
+
+            return sentences.join(' ');
+        }
+
+        // Hiển thị tin tức tổng hợp
+        function displaySummaryNews(newsItems) {
+            const summaryContainer = document.getElementById('summary-news');
+
+            if (newsItems.length === 0) {
+                summaryContainer.innerHTML = '<div class="error">Không tìm thấy tin tức toàn cầu!</div>';
+                return;
+            }
+
+            let html = '';
+            newsItems.forEach(item => {
+                const typeColors = {
+                    technology: '#667eea',
+                    business: '#28a745',
+                    finance: '#dc3545'
+                };
+
+                html += `
+                    <article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid ${typeColors[item.type]};">
+                        <h3 style="color: ${typeColors[item.type]}; margin-bottom: 10px;">${item.title}</h3>
+                        <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> ${item.source}</p>
+                        <p style="color: #444; line-height: 1.6;">${item.summary}</p>
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" 
+                           style="display: inline-block; background: ${typeColors[item.type]}; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">
+                            Đọc bài viết gốc
+                        </a>
+                    </article>
+                `;
+            });
+
+            summaryContainer.innerHTML = html;
+        }
+
+        // Tải tin tức toàn cầu khi trang được load
+        document.addEventListener('DOMContentLoaded', fetchGlobalNews);
     </script>
 </body>
 </html>
