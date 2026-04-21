@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech News - Tin Tức Công Nghệ Hàng Ngày</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-style: italic;
+        }
+
+        .last-updated {
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .news-source {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+
+        .news-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .news-link {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .news-link:hover {
+            background: #5a3d7a;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #ff6b6b;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Tech News</h1>
+            <p class="subtitle">Tin tức công nghệ hàng ngày từ các nguồn uy tín</p>
+            <p class="last-updated" id="update-time">Cập nhật lần cuối: Chưa có dữ liệu</p>
+        </header>
+
+        <div id="news-container">
+            <div class="loading">Đang tải tin tức...</div>
+        </div>
+
+        <footer>
+            <p>© 2026 Tech News - Cập nhật tự động từ các nguồn uy tín</p>
+        </footer>
+    </div>
+
+    <script>
+        // Danh sách các nguồn tin tức uy tín
+        const newsSources = [
+            {
+                name: "GenK",
+                url: "https://genk.vn",
+                rss: "https://genk.vn/rss"
+            },
+            {
+                name: "ICTNews",
+                url: "https://ictnews.vn",
+                rss: "https://ictnews.vn/rss"
+            },
+            {
+                name: "Thanh Niên Công Nghệ",
+                url: "https://thanhnien.vn/cong-nghe",
+                rss: "https://thanhnien.vn/rss/cong-nghe.rss"
+            },
+            {
+                name: "VnExpress Công Nghệ",
+                url: "https://vnexpress.net/khoa-hoc-cong-nghe",
+                rss: "https://vnexpress.net/rss/tin-moi-nhat.rss"
+            }
+        ];
+
+        // Hàm lấy tin tức từ các nguồn
+        async function fetchNews() {
+            const newsContainer = document.getElementById('news-container');
+            newsContainer.innerHTML = '<div class="loading">Đang tải tin tức...</div>';
+
+            try {
+                // Sử dụng CORS proxy để tránh lỗi CORS
+                const proxyUrl = 'https://api.allorigins.win/get?url=';
+                const maxItems = 10;
+
+                const newsItems = [];
+
+                // Lấy tin tức từ từng nguồn
+                for (const source of newsSources) {
+                    try {
+                        const response = await fetch(`${proxyUrl}${encodeURIComponent(source.rss)}`);
+                        const data = await response.json();
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+
+                        const items = xmlDoc.querySelectorAll('item');
+                        for (let i = 0; i < Math.min(items.length, 3); i++) {
+                            const item = items[i];
+                            const title = item.querySelector('title').textContent;
+                            const link = item.querySelector('link').textContent;
+                            const description = item.querySelector('description').textContent;
+                            const pubDate = item.querySelector('pubDate').textContent;
+
+                            newsItems.push({
+                                title,
+                                link,
+                                description: description.replace(/<[^>]*>/g, ''),
+                                source: source.name,
+                                pubDate
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Lỗi khi lấy tin từ ${source.name}:`, error);
+                    }
+                }
+
+                // Sắp xếp theo ngày đăng
+                newsItems.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+                // Hiển thị tin tức
+                displayNews(newsItems.slice(0, maxItems));
+
+            } catch (error) {
+                console.error("Lỗi khi lấy tin tức:", error);
+                newsContainer.innerHTML = '<div class="error">Không thể tải tin tức. Vui lòng thử lại sau!</div>';
+            }
+        }
+
+        // Hiển thị tin tức
+        function displayNews(newsItems) {
+            const newsContainer = document.getElementById('news-container');
+
+            if (newsItems.length === 0) {
+                newsContainer.innerHTML = '<div class="error">Không tìm thấy tin tức mới!</div>';
+                return;
+            }
+
+            let html = '';
+            newsItems.forEach(item => {
+                html += `
+                    <div class="news-card">
+                        <div class="news-content">
+                            <span class="news-source">${item.source}</span>
+                            <h3 class="news-title">${item.title}</h3>
+                            <p class="news-description">${item.description.substring(0, 150)}...</p>
+                            <a href="${item.link}" class="news-link" target="_blank" rel="noopener noreferrer">Đọc thêm</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            newsContainer.innerHTML = html;
+            document.getElementById('update-time').textContent = `Cập nhật lần cuối: ${new Date().toLocaleString('vi-VN')}`;
+        }
+
+        // Tải tin tức khi trang được load
+        document.addEventListener('DOMContentLoaded', fetchNews);
+
+        // Tải tin tức mới mỗi 30 phút
+        setInterval(fetchNews, 30 * 60 * 1000);
+    </script>
+</body>
+</html>
