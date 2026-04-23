@@ -5,6 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tech News - Tin Tức Công Nghệ Hàng Ngày</title>
     <style>
+        :root {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: white;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-muted: #888;
+            --shadow-color: rgba(0, 0, 0, 0.2);
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --source-bg: #667eea;
+            --link-bg: #764ba2;
+            --link-hover: #5a3d7a;
+            --article-bg: #f8f9fa;
+            --border-tech: #667eea;
+            --border-business: #28a745;
+            --border-finance: #dc3545;
+            --error-color: #ff6b6b;
+            --toggle-btn-bg: rgba(255, 255, 255, 0.3);
+            --toggle-btn-text: white;
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --header-bg: rgba(30, 30, 50, 0.95);
+            --card-bg: #2d2d44;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #888;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --shadow-light: rgba(0, 0, 0, 0.2);
+            --source-bg: #4a5568;
+            --link-bg: #6b4c9a;
+            --link-hover: #8b5cf6;
+            --article-bg: #2d2d44;
+            --border-tech: #60a5fa;
+            --border-business: #34d399;
+            --border-finance: #f87171;
+            --error-color: #f87171;
+            --toggle-btn-bg: rgba(255, 255, 255, 0.1);
+            --toggle-btn-text: #e0e0e0;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,9 +57,10 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-primary);
             line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -25,27 +70,48 @@
         }
 
         header {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--header-bg);
             padding: 20px 0;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px var(--shadow-color);
             margin-bottom: 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--toggle-btn-bg);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: var(--toggle-btn-text);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: var(--source-bg);
         }
 
         h1 {
-            color: #667eea;
+            color: var(--source-bg);
             font-size: 2.5em;
             margin-bottom: 10px;
         }
 
         .subtitle {
-            color: #666;
+            color: var(--text-secondary);
             font-style: italic;
         }
 
         .last-updated {
-            color: #888;
+            color: var(--text-muted);
             font-size: 0.9em;
             margin-top: 10px;
         }
@@ -57,22 +123,34 @@
         }
 
         .news-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
         }
 
         .news-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px var(--shadow-color);
         }
 
         .news-image {
             width: 100%;
             height: 200px;
             object-fit: cover;
+            background: var(--article-bg);
+        }
+
+        .news-image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--source-bg) 0%, var(--link-bg) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
         }
 
         .news-content {
@@ -81,14 +159,14 @@
 
         .news-title {
             font-size: 1.3em;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 10px;
             font-weight: 600;
         }
 
         .news-source {
             display: inline-block;
-            background: #667eea;
+            background: var(--source-bg);
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
@@ -97,13 +175,13 @@
         }
 
         .news-description {
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 15px;
         }
 
         .news-link {
             display: inline-block;
-            background: #764ba2;
+            background: var(--link-bg);
             color: white;
             padding: 8px 20px;
             border-radius: 25px;
@@ -113,7 +191,7 @@
         }
 
         .news-link:hover {
-            background: #5a3d7a;
+            background: var(--link-hover);
         }
 
         .loading {
@@ -126,8 +204,83 @@
         .error {
             text-align: center;
             padding: 50px;
-            color: #ff6b6b;
+            color: var(--error-color);
             font-size: 1.2em;
+        }
+
+        .summary-section {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow-color);
+            transition: background 0.3s ease;
+        }
+
+        .summary-section h2 {
+            color: var(--source-bg);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .summary-article {
+            background: var(--article-bg);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--border-tech);
+            transition: background 0.3s ease;
+        }
+
+        .summary-article h3 {
+            color: var(--source-bg);
+            margin-bottom: 10px;
+        }
+
+        .summary-article.business h3 {
+            color: var(--border-business);
+        }
+
+        .summary-article.finance h3 {
+            color: var(--border-finance);
+        }
+
+        .summary-article p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .summary-article .content {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .summary-link {
+            display: inline-block;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            margin-top: 10px;
+            font-size: 0.9em;
+            background: var(--source-bg);
+            transition: background 0.3s ease;
+        }
+
+        .summary-article.business .summary-link {
+            background: var(--border-business);
+        }
+
+        .summary-article.finance .summary-link {
+            background: var(--border-finance);
         }
 
         @media (max-width: 768px) {
@@ -135,8 +288,17 @@
                 grid-template-columns: 1fr;
             }
 
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
             h1 {
                 font-size: 2em;
+            }
+
+            .theme-toggle {
+                position: static;
+                margin-top: 15px;
             }
         }
 
@@ -152,6 +314,7 @@
 <body>
     <div class="container">
         <header>
+            <button class="theme-toggle" id="theme-toggle" title="Chuyển đổi giao diện">🌙</button>
             <h1>🚀 Tech News</h1>
             <p class="subtitle">Tin tức công nghệ hàng ngày từ các nguồn uy tín</p>
             <p class="last-updated" id="update-time">Cập nhật lần cuối: Chưa có dữ liệu</p>
@@ -166,100 +329,36 @@
         </footer>
 
         <!-- Tin tức tổng hợp - Cập nhật: 2026-04-21 08:19:17 -->
-<section style="max-width: 1200px; margin: 50px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
-<h2 style="color: #667eea; text-align: center; margin-bottom: 30px; font-size: 2em;">📊 TIN TỨC TỔNG HỢP HÔM NAY</h2>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;">
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-<h3 style="color: #667eea; margin-bottom: 10px;">Tin tức công nghệ số 1</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> TechCrunch</p>
-<p style="color: #444; line-height: 1.6;">Đây là tóm tắt ngắn về tin tức công nghệ mới nhất từ các nguồn uy tín. Bài viết cung cấp thông tin chi tiết về những phát triển mới nhất trong lĩnh vực công nghệ.</p>
-<a href="https://techcrunch.com" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-<h3 style="color: #667eea; margin-bottom: 10px;">Tin tức công nghệ số 2</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> TechCrunch</p>
-<p style="color: #444; line-height: 1.6;">Đây là tóm tắt ngắn về tin tức công nghệ mới nhất từ các nguồn uy tín. Bài viết cung cấp thông tin chi tiết về những phát triển mới nhất trong lĩnh vực công nghệ.</p>
-<a href="https://techcrunch.com" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-<h3 style="color: #667eea; margin-bottom: 10px;">Tin tức công nghệ số 3</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> TechCrunch</p>
-<p style="color: #444; line-height: 1.6;">Đây là tóm tắt ngắn về tin tức công nghệ mới nhất từ các nguồn uy tín. Bài viết cung cấp thông tin chi tiết về những phát triển mới nhất trong lĩnh vực công nghệ.</p>
-<a href="https://techcrunch.com" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-<h3 style="color: #667eea; margin-bottom: 10px;">Tin tức công nghệ số 4</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> TechCrunch</p>
-<p style="color: #444; line-height: 1.6;">Đây là tóm tắt ngắn về tin tức công nghệ mới nhất từ các nguồn uy tín. Bài viết cung cấp thông tin chi tiết về những phát triển mới nhất trong lĩnh vực công nghệ.</p>
-<a href="https://techcrunch.com" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-<h3 style="color: #667eea; margin-bottom: 10px;">Tin tức công nghệ số 5</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> TechCrunch</p>
-<p style="color: #444; line-height: 1.6;">Đây là tóm tắt ngắn về tin tức công nghệ mới nhất từ các nguồn uy tín. Bài viết cung cấp thông tin chi tiết về những phát triển mới nhất trong lĩnh vực công nghệ.</p>
-<a href="https://techcrunch.com" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<!-- Kinh doanh -->
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #28a745;">
-<h3 style="color: #28a745; margin-bottom: 10px;">Tin tức kinh doanh số 1</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> Bloomberg</p>
-<p style="color: #444; line-height: 1.6;">Bài viết phân tích xu hướng thị trường kinh doanh toàn cầu. Các chuyên gia nhận định về triển vọng phát triển trong thời gian tới.</p>
-<a href="https://www.bloomberg.com/business" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #28a745; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #28a745;">
-<h3 style="color: #28a745; margin-bottom: 10px;">Tin tức kinh doanh số 2</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> Bloomberg</p>
-<p style="color: #444; line-height: 1.6;">Bài viết phân tích xu hướng thị trường kinh doanh toàn cầu. Các chuyên gia nhận định về triển vọng phát triển trong thời gian tới.</p>
-<a href="https://www.bloomberg.com/business" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #28a745; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #28a745;">
-<h3 style="color: #28a745; margin-bottom: 10px;">Tin tức kinh doanh số 3</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> Bloomberg</p>
-<p style="color: #444; line-height: 1.6;">Bài viết phân tích xu hướng thị trường kinh doanh toàn cầu. Các chuyên gia nhận định về triển vọng phát triển trong thời gian tới.</p>
-<a href="https://www.bloomberg.com/business" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #28a745; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<!-- Tài chính -->
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #dc3545;">
-<h3 style="color: #dc3545; margin-bottom: 10px;">Tin tức tài chính số 1</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> CNBC</p>
-<p style="color: #444; line-height: 1.6;">Phân tích biến động thị trường tài chính toàn cầu. Các chuyên gia cập nhật tình hình cổ phiếu, tiền tệ và xu hướng đầu tư.</p>
-<a href="https://www.cnbc.com/finance" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #dc3545; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
-<article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #dc3545;">
-<h3 style="color: #dc3545; margin-bottom: 10px;">Tin tức tài chính số 2</h3>
-<p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> CNBC</p>
-<p style="color: #444; line-height: 1.6;">Phân tích biến động thị trường tài chính toàn cầu. Các chuyên gia cập nhật tình hình cổ phiếu, tiền tệ và xu hướng đầu tư.</p>
-<a href="https://www.cnbc.com/finance" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #dc3545; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">Đọc bài viết gốc</a>
-</article>
+<section id="summary-news-section" class="summary-section">
+<h2 style="color: var(--source-bg); text-align: center; margin-bottom: 30px; font-size: 2em;">📊 TIN TỨC TỔNG HỢP HÔM NAY</h2>
+<div id="summary-news" class="summary-grid">
 </div>
 </section>
 
     </div>
 
     <script>
-        // Danh sách các nguồn tin tức uy tín
-        const newsSources = [
-            {
-                name: "GenK",
-                url: "https://genk.vn",
-                rss: "https://genk.vn/rss"
-            },
-            {
-                name: "ICTNews",
-                url: "https://ictnews.vn",
-                rss: "https://ictnews.vn/rss"
-            },
-            {
-                name: "Thanh Niên Công Nghệ",
-                url: "https://thanhnien.vn/cong-nghe",
-                rss: "https://thanhnien.vn/rss/cong-nghe.rss"
-            },
-            {
-                name: "VnExpress Công Nghệ",
-                url: "https://vnexpress.net/khoa-hoc-cong-nghe",
-                rss: "https://vnexpress.net/rss/tin-moi-nhat.rss"
-            }
-        ];
+        // Dark mode toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
         // Danh sách các nguồn tin tức uy tín
         const newsSources = [
             {
@@ -350,6 +449,7 @@
             newsItems.forEach(item => {
                 html += `
                     <div class="news-card">
+                        <div class="news-image-placeholder">📰</div>
                         <div class="news-content">
                             <span class="news-source">${item.source}</span>
                             <h3 class="news-title">${item.title}</h3>
@@ -551,19 +651,14 @@
 
             let html = '';
             newsItems.forEach(item => {
-                const typeColors = {
-                    technology: '#667eea',
-                    business: '#28a745',
-                    finance: '#dc3545'
-                };
+                const typeClass = item.type;
 
                 html += `
-                    <article style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid ${typeColors[item.type]};">
-                        <h3 style="color: ${typeColors[item.type]}; margin-bottom: 10px;">${item.title}</h3>
-                        <p style="color: #666; font-size: 0.9em; margin-bottom: 10px;"><strong>Nguồn:</strong> ${item.source}</p>
-                        <p style="color: #444; line-height: 1.6;">${item.summary}</p>
-                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" 
-                           style="display: inline-block; background: ${typeColors[item.type]}; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; margin-top: 10px; font-size: 0.9em;">
+                    <article class="summary-article ${typeClass}">
+                        <h3>${item.title}</h3>
+                        <p><strong>Nguồn:</strong> ${item.source}</p>
+                        <p class="content">${item.summary}</p>
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="summary-link">
                             Đọc bài viết gốc
                         </a>
                     </article>
